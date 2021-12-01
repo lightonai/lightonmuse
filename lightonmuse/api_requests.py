@@ -57,6 +57,7 @@ class Create(BaseRequest):
         super().__init__(model=model, endpoint="create")
 
     def __call__(self, text: Union[str, List[str]],
+                 skill: Optional[str] = None,
                  n_tokens: int = 20,
                  n_completions: int = 1,
                  best_of: int = 1,
@@ -80,6 +81,8 @@ class Create(BaseRequest):
         -------------
         text: Union[str, List[str]],
             input prompt or list of input prompts.
+        skill: Optional[str], default None,
+            condition the model to perform a certain task. May be `"summarization"`.
         n_tokens: int, default 20,
             number of tokens to generate.
         n_completions: int, default 1,
@@ -148,7 +151,7 @@ class Create(BaseRequest):
         """
         if mode not in ["greedy", "topk", "nucleus"]:
             raise ValueError(f"mode: {mode} is not valid. Use one of `greedy`, `topk` or `nucleus`")
-        params = {"n_tokens": n_tokens, "n_completions": n_completions, "best_of": best_of,
+        params = {"n_tokens": n_tokens, "skill": skill, "n_completions": n_completions, "best_of": best_of,
                   # sampling
                   "mode": mode, "temperature": temperature, "p": p, "k": k,
                   # control
