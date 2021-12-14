@@ -2,3 +2,5 @@
 .idea/
 lightonmuse.egg-info/
 */__pycache__
+build/
+dist/
