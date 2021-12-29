@@ -51,7 +51,7 @@ class Create(BaseRequest):
     ----------
     model: str,
         name of the model to use as intelligence engine.
-        Currently supports only `orion-fr`.
+        Currently supports `"orion-fr"` and `"lyra-en"`.
     """
     def __init__(self, model: str = "orion-fr"):
         super().__init__(model=model, endpoint="create")
@@ -175,7 +175,7 @@ class Analyse(BaseRequest):
     ----------
     model: str,
         name of the model to use as intelligence engine.
-        Currently supports only `"orion-fr"`.
+        Currently supports only `"orion-fr"` and `"lyra-en"`.
     """
     def __init__(self, model: str = "orion-fr"):
         super().__init__(model=model, endpoint="analyse")
@@ -211,7 +211,7 @@ class Represent(BaseRequest):
     ----------
     model: str,
         name of the model to use as intelligence engine.
-        Currently supports only `"orion-fr"`.
+        Currently supports only `"orion-fr"` and `"lyra-en"`.
     """
     def __init__(self, model: str = "orion-fr"):
         super().__init__(model=model, endpoint="represent")
@@ -247,7 +247,7 @@ class Select(BaseRequest):
     ----------
     model: str,
         name of the model to use as intelligence engine.
-        Currently supports only `"orion-fr"`.
+        Currently supports only `"orion-fr"` and `"lyra-en"`.
     """
     def __init__(self, model: str = "orion-fr"):
         super().__init__(model=model, endpoint="select")
@@ -294,7 +294,7 @@ class Compare(BaseRequest):
     ----------
     model: str,
         name of the model to use as intelligence engine.
-        Currently supports only `"orion-fr"`.
+        Currently supports only `"orion-fr"` and `"lyra-en"`.
     """
     def __init__(self, model: str = "orion-fr"):
         super().__init__(model=model, endpoint="compare")
