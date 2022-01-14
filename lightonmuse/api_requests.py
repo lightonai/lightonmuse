@@ -28,19 +28,23 @@ class BaseRequest:
         return {'accept': self.accept, 'X-API-KEY': self.api_key,
                 'X-Model': self.model, 'Content-Type': self.content_type}
 
-    def request(self, payload) -> requests.models.Response:
-        response = requests.post(self.url, data=payload, headers=self.headers).json()
-        if isinstance(response, dict) and "error" in response.keys():
-            if response["error"] == "Timeout":
-                raise RuntimeError("The request timed out. Reduce the number of tokens or "
-                                   "completions requested.")
-            else:
-                raise RuntimeError("Invalid API key. Illegal access resulted in no generation.")
-        response = json.loads(response)
-        if "error_msg" in response.keys():
-            raise RuntimeError(f"The API call returned an error for the "
-                               f"request {response['request_id']}. "
-                               f"Error message: `{response['error_msg']}`")
+    def request(self, payload) -> dict:
+        response = requests.post(self.url, data=payload, headers=self.headers)
+        if response.ok:
+            response = response.json()
+            if isinstance(response, dict) and "error" in response.keys():
+                if response["error"] == "Timeout":
+                    raise RuntimeError("The request timed out. Reduce the number of tokens or "
+                                       "completions requested.")
+                else:
+                    raise RuntimeError("Invalid API key. Illegal access resulted in no generation.")
+            response = json.loads(response)
+            if "error_msg" in response.keys():
+                raise RuntimeError(f"The API call returned an error for the "
+                                   f"request {response['request_id']}. "
+                                   f"Error message: `{response['error_msg']}`")
+        else:
+            raise RuntimeError(f"The request failed with status code {response.status_code}")
         return response
 
 
