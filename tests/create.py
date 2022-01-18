@@ -55,12 +55,12 @@ class TestCreateEndpoint(unittest.TestCase):
     def test_multiple_outputs(self):
         creator = lightonmuse.Create("orion-fr")
         sentence = "C'est quand même un truc magique, se dit le livreur, que d'avoir toujours"
-        n_tokens, n_completions, best_of = 16, 4, 2
+        n_tokens, n_completions, n_best = 16, 4, 2
         outputs, cost, rid = creator(sentence, n_tokens=n_tokens, seed=0,
-                                     n_completions=n_completions, best_of=best_of)
-        assert len(outputs[0]["completions"]) == best_of, f"Returned " \
+                                     n_completions=n_completions, n_best=n_best)
+        assert len(outputs[0]["completions"]) == n_best, f"Returned " \
                                                           f"{len(outputs[0]['completions'])}" \
-                                                          f"completions instead of {best_of}."
+                                                          f"completions instead of {n_best}."
         assert cost == n_tokens * n_completions, f"Cost={cost} despite asking for {n_tokens} " \
                                                  f"tokens for {n_completions} completions."
 
@@ -93,7 +93,6 @@ class TestCreateEndpoint(unittest.TestCase):
         assert outputs[0]["completions"][0]["output_text"][-2:] == "et", f"Completion does not " \
                                                                          f"end with stopword"
         assert cost < n_tokens, f"Cost is higher than expected given generation ended at stopword."
-
 
     def test_utilities(self):
         # check reproducibility with the seed
