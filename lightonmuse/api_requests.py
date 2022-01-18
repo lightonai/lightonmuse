@@ -167,7 +167,7 @@ class Create(BaseRequest):
         payload = json.dumps({"text": text, "params": params})
         response = self.request(payload)
         request_id = response["request_id"]
-        cost = response["total_cost"]
+        cost = response["costs"]
         outputs = response["outputs"][0]
         return outputs, cost, request_id
 
@@ -203,7 +203,7 @@ class Analyse(BaseRequest):
         payload = json.dumps({"text": text})
         response = self.request(payload)
         request_id = response["request_id"]
-        cost = response["total_cost"]
+        cost = response["costs"]
         outputs = response["outputs"][0]
         return outputs, cost, request_id
 
@@ -239,7 +239,7 @@ class Represent(BaseRequest):
         payload = json.dumps({"text": text})
         response = self.request(payload)
         request_id = response["request_id"]
-        cost = response["total_cost"]
+        cost = response["costs"]
         outputs = response["outputs"][0]
         return outputs, cost, request_id
 
@@ -286,7 +286,7 @@ class Select(BaseRequest):
                               "conjunction": conjunction, "concat_best": concat_best})
         response = self.request(payload)
         request_id = response["request_id"]
-        cost = response["total_cost"]
+        cost = response["costs"]
         outputs = response["outputs"][0]
         return outputs, cost, request_id
 
@@ -324,6 +324,6 @@ class Compare(BaseRequest):
         payload = json.dumps({"reference": reference, "candidates": candidates})
         response = self.request(payload)
         request_id = response["request_id"]
-        cost = response["total_cost"]
+        cost = response["costs"]
         outputs = response["outputs"][0]
         return outputs, cost, request_id
