@@ -64,7 +64,7 @@ class Create(BaseRequest):
                  skill: Optional[str] = None,
                  n_tokens: int = 20,
                  n_completions: int = 1,
-                 best_of: int = 1,
+                 n_best: int = 1,
                  # sampling
                  mode: str = "nucleus",
                  temperature: float = 1,
@@ -93,7 +93,7 @@ class Create(BaseRequest):
             number of different completion proposals to return for each prompt.
             :warning: You will be charged for the total number of tokens generated:
             `n_completions * n_tokens`, stay reasonable!
-        best_of: int, default 1,
+        n_best: int, default 1,
             only return the `best_of` among `n_completions`. Completions are selected
             according to how likely they are, summing the log-likelihood over all tokens generated.
         # sampling
@@ -155,7 +155,7 @@ class Create(BaseRequest):
         """
         if mode not in ["greedy", "topk", "nucleus"]:
             raise ValueError(f"mode: {mode} is not valid. Use one of `greedy`, `topk` or `nucleus`")
-        params = {"n_tokens": n_tokens, "skill": skill, "n_completions": n_completions, "best_of": best_of,
+        params = {"n_tokens": n_tokens, "skill": skill, "n_completions": n_completions, "n_best": n_best,
                   # sampling
                   "mode": mode, "temperature": temperature, "p": p, "k": k,
                   # control
