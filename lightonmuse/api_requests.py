@@ -184,11 +184,13 @@ class Analyse(BaseRequest):
     def __init__(self, model: str = "orion-fr"):
         super().__init__(model=model, endpoint="analyse")
 
-    def __call__(self, text: Union[str, List[str]]) -> Tuple[List, int, str]:
+    def __call__(self, text: Union[str, List[str]], skill: Optional[str] = None) -> Tuple[List, int, str]:
         """Parameters
         -------------
         text: Union[str, List[str]],
             input text or list of input texts.
+        skill: Optional[str], default None,
+            condition the model to perform a certain task. May be `"summarization"`.
 
         Return
         ------
@@ -220,11 +222,13 @@ class Represent(BaseRequest):
     def __init__(self, model: str = "orion-fr"):
         super().__init__(model=model, endpoint="represent")
 
-    def __call__(self, text: Union[str, List[str]]) -> Tuple[List, int, str]:
+    def __call__(self, text: Union[str, List[str]], skill: Optional[str] = None) -> Tuple[List, int, str]:
         """Parameters
         -------------
         text: Union[str, List[str]],
             input text or list of input texts.
+        skill: Optional[str], default None,
+            condition the model to perform a certain task. May be `"summarization"`.
 
         Return
         ------
@@ -257,7 +261,8 @@ class Select(BaseRequest):
         super().__init__(model=model, endpoint="select")
 
     def __call__(self, reference: str, candidates: List[str],
-                 conjunction: str = None, concat_best: bool = False) -> Tuple[List, int, str]:
+                 conjunction: str = None, skill: Optional[str] = None,
+                 concat_best: bool = False) -> Tuple[List, int, str]:
         """Parameters
         -------------
         reference: str,
@@ -269,6 +274,8 @@ class Select(BaseRequest):
             compute the likelihood. The prompt will have the structure
             `reference + conjunction + candidate`. Finding a good conjunction can greatly increase
             the performance of `Select`.
+        skill: Optional[str], default None,
+            condition the model to perform a certain task. May be `"summarization"`.
         concat_best: bool, default to False,
             whether the response will contain a "best" field with the selected choice.
 
@@ -283,7 +290,7 @@ class Select(BaseRequest):
             ID string for the request.
         """
         payload = json.dumps({"reference": reference, "candidates": candidates,
-                              "conjunction": conjunction, "concat_best": concat_best})
+                              "conjunction": conjunction, "skill": skill, "concat_best": concat_best})
         response = self.request(payload)
         request_id = response["request_id"]
         cost = response["costs"]
@@ -303,13 +310,15 @@ class Compare(BaseRequest):
     def __init__(self, model: str = "orion-fr"):
         super().__init__(model=model, endpoint="compare")
 
-    def __call__(self, reference: str, candidates: List[str]) -> Tuple[List, int, str]:
+    def __call__(self, reference: str, candidates: List[str], skill: Optional[str] = None) -> Tuple[List, int, str]:
         """Parameters
         -------------
         reference: str,
             reference input to compute cosine similarity against.
         candidates: List[str],
             input(s) that are compared to the reference and ranked based on similarity.
+        skill: Optional[str], default None,
+            condition the model to perform a certain task. May be `"summarization"`.
 
         Return
         ------
