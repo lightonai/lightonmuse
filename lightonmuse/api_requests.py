@@ -210,8 +210,8 @@ class Analyse(BaseRequest):
         return outputs, cost, request_id
 
 
-class Represent(BaseRequest):
-    """Represent endpoint.
+class Embed(BaseRequest):
+    """Embed endpoint.
 
     Parameters
     ----------
@@ -220,7 +220,7 @@ class Represent(BaseRequest):
         Currently supports only `"orion-fr"` and `"lyra-en"`.
     """
     def __init__(self, model: str = "orion-fr"):
-        super().__init__(model=model, endpoint="represent")
+        super().__init__(model=model, endpoint="embed")
 
     def __call__(self, text: Union[str, List[str]], skill: Optional[str] = None) -> Tuple[List, int, str]:
         """Parameters
