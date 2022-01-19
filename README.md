@@ -1,4 +1,4 @@
-# <img src="https://cloud.lighton.ai/wp-content/uploads/2020/01/LightOnCloud.png" width=80/> lightonmuse
+# <img src="https://muse.lighton.ai/images/logo/lighton_logo.png" width=80/> lightonmuse
 
 [![Twitter Follow](https://img.shields.io/twitter/follow/LightOnIO.svg?style=social)](https://twitter.com/LightOnIO)
 
@@ -6,7 +6,13 @@ Python bindings to production-ready intelligence primitives powered by state-of-
 
 > Create. Process. Understand. Learn.
 
-Learn more about our [Muses](https://muse.lighton.ai/).
+Uplift your product with the natural language generation & understanding capabilities of Muse. State-of-the-art large language models in French, English, Italian, and Spanish—with more to come—are just an API call away. Our models can help you build conversational AI, copywriting tools, text classifiers, semantic search, and more.
+
+> 🔒 Accessing the Muse API private beta
+>
+> The Muse API is currently in private beta for select customers. You can [register your interest](https://lightonmuse.typeform.com/waitlist), and we will keep you updated regarding our public launch. Stay tuned: public access is coming early 2022.
+
+Learn more about [Muse](https://muse.lighton.ai/).
 
 ## Installation and documentation
 
@@ -28,8 +34,6 @@ export MUSE_API_KEY="<your api key>"
 
 Guides and documentation can be found at the [API docs website](https://muse.lighton.ai/docs/).
 
-## Access to LightOn MUSE
+## Private Beta access to LightOn MUSE
 
-To request access to LightOn MUSE and try our intelligence primitives, get in touch: customer.relations@lighton.ai
-
-
+To request access to LightOn MUSE in private beta and try our intelligence primitives, get in touch: customer.relations@lighton.ai

@@ -1,8 +1,14 @@
+import pathlib
 from setuptools import find_packages, setup
 
+
+here = pathlib.Path(__file__).parent.resolve()
+
 name = "lightonmuse"
-description = "Python client for the LightOn Muse API",
-author = "LightOn AI Research",
+description = "Python client for the LightOn Muse API"
+# Get the long description from the README file
+long_description = (here / 'README.md').read_text(encoding='utf-8')
+author = "LightOn AI Research"
 author_email = "support@lighton.ai"
 classifiers = [
     # Trove classifiers
@@ -22,6 +28,7 @@ try:
     setup(
         name=name,
         description=description,
+        long_description=long_description,
         author=author,
         author_email=author_email,
         use_scm_version=True,
@@ -34,6 +41,7 @@ except LookupError:
     setup(
         name=name,
         description=description,
+        long_description=long_description,
         author=author,
         author_email=author_email,
         version="test",
