@@ -7,21 +7,22 @@ import lightonmuse
 class TestUnderstandEndpoints(unittest.TestCase):
     def test_analyse(self):
         # check types and single input
-        output_keys = {'execution_metadata', 'text', 'score', 'normalized_score', 'token_scores'}
+        output_keys = {'execution_metadata', 'text', 'score'}
         analyser = lightonmuse.Analyse("orion-fr")
         sentence = "Je voudrais un café et deux croissants, s'il vous plait."
         outputs, cost, rid = analyser(sentence)
         assert isinstance(outputs, list), "`outputs` is not list as expected"
         assert len(outputs) == 1, f"`len(outputs) = {len(outputs)}` despite single input."
-        assert cost == 1, f"`cost={cost}` despite single Analyse call."
+        assert cost["orion-fr@default"]["batch_size"] == 1, f"`batch_size={cost['orion-fr@default']['batch_size']}` " \
+                                                            f"despite single Analyse call."
         assert isinstance(rid, str), f"Detected type {type(rid)} for `rid`, expected `str` instead."
         assert output_keys == \
                outputs[0].keys(), f"Set of keys is different than expected. Expected {output_keys}" \
                                   f"got {outputs[0].keys()} instead."
         assert outputs[0]["text"] == sentence, f"`text` field in `outputs` does not match the" \
                                                f" input sentence."
-        score, normalized_score = outputs[0]["score"], outputs[0]["normalized_score"]
-        n_tokens = len(outputs[0]["token_scores"])
+        score, normalized_score = outputs[0]["score"]["logprob"], outputs[0]["score"]["normalized_logprob"]
+        n_tokens = len(outputs[0]["score"]["token_logprobs"])
         assert score <= 0., f"Detected score > 0. This would give probability={math.exp(score)} " \
                             f"that is greater than 1."
         assert math.isclose(normalized_score, score/n_tokens), f"Normalized score isn't close to " \
@@ -34,31 +35,32 @@ class TestUnderstandEndpoints(unittest.TestCase):
         assert isinstance(outputs, list), "`outputs` is not list as expected"
         assert len(outputs) == len(sentence_list), f"`len(outputs) = {len(outputs)}` despite " \
                                                    f"len(input)={len(sentence_list)}"
-        assert cost == len(sentence_list), f"`cost={cost}` despite len(input)={len(sentence_list)}"
+        assert cost["orion-fr@default"]["batch_size"] == len(sentence_list), \
+            f"`cost={cost['orion-fr@default']['batch_size']}` despite len(input)={len(sentence_list)}"
         assert isinstance(rid, str), f"Detected type {type(rid)} for `rid`, expected `str` instead."
 
         # check correct functioning
         message = "The unlikely sentence is more likely than the normal one."
-        assert outputs[0]["normalized_score"] > outputs[1]["normalized_score"], f"{message}"
-        token_scores = [list(element.values())[0] for element in outputs[1]["token_scores"]]
+        assert outputs[0]["score"]["normalized_logprob"] > outputs[1]["score"]["normalized_logprob"], f"{message}"
+        token_scores = [list(element.values())[0] for element in outputs[1]["score"]["token_logprobs"]]
         message = f"The most unlikely token is different than expected."
         assert math.isclose(min(token_scores), token_scores[-1]), f"{message}"
 
-    def test_represent(self):
+    def test_embed(self):
         # check types and single input
-        # TODO: update this when `txt`->`text` upstream
-        output_keys = {'execution_metadata', 'txt', 'embedding'}
-        representer = lightonmuse.Represent("orion-fr")
+        output_keys = {'execution_metadata', 'text', 'embedding'}
+        representer = lightonmuse.Embed("orion-fr")
         sentence = "Je voudrais un café et deux croissants, s'il vous plait."
         outputs, cost, rid = representer(sentence)
         assert isinstance(outputs, list), "`outputs` is not list as expected"
         assert len(outputs) == 1, f"`len(outputs) = {len(outputs)}` despite single input."
-        assert cost == 1, f"`cost={cost}` despite single Represent call."
+        assert cost['orion-fr@default']['batch_size'] == 1, \
+            f"`cost={cost['orion-fr@default']['batch_size']}` despite single Represent call."
         assert isinstance(rid, str), f"Detected type {type(rid)} for `rid`, expected `str` instead."
         assert output_keys == \
                outputs[0].keys(), f"Set of keys is different than expected. Expected {output_keys}" \
                                   f"got {outputs[0].keys()} instead."
-        assert outputs[0]["txt"] == sentence, f"`txt` field in `outputs` does not match the" \
+        assert outputs[0]["text"] == sentence, f"`text` field in `outputs` does not match the" \
                                                f" input sentence."
         embedding = outputs[0]["embedding"]
         assert isinstance(embedding, list)
@@ -71,7 +73,8 @@ class TestUnderstandEndpoints(unittest.TestCase):
         assert isinstance(outputs, list), "`outputs` is not list as expected"
         assert len(outputs) == len(sentence_list), f"`len(outputs) = {len(outputs)}` despite " \
                                                    f"len(input)={len(sentence_list)}"
-        assert cost == len(sentence_list), f"`cost={cost}` despite len(input)={len(sentence_list)}"
+        assert cost["orion-fr@default"]["batch_size"] == len(sentence_list), \
+            f"`batch size={cost['orion-fr@default']['batch_size']}` despite len(input)={len(sentence_list)}"
         assert isinstance(rid, str), f"Detected type {type(rid)} for `rid`, expected `str` instead."
 
         first_embedding, second_embedding = outputs[0]["embedding"], outputs[1]["embedding"]
@@ -89,7 +92,8 @@ class TestUnderstandEndpoints(unittest.TestCase):
         outputs, cost, rid = selecter(reference, candidates)
         assert isinstance(outputs, list), "`outputs` is not list as expected"
         assert len(outputs) == 1, f"`len(outputs) = {len(outputs)}` despite single reference."
-        assert cost == len(candidates), f"`cost={cost}` despite {candidates} candidates."
+        assert cost["orion-fr@default"]["batch_size"] == len(candidates), \
+            f"`batch size={cost['orion-fr@default']['batch_size']}` despite {len(candidates)} candidates."
         assert isinstance(rid, str), f"Detected type {type(rid)} for `rid`, expected `str` instead."
         assert output_keys == \
                outputs[0].keys(), f"Set of keys is different than expected. Expected " \
@@ -103,9 +107,9 @@ class TestUnderstandEndpoints(unittest.TestCase):
         assert len(rankings) == len(candidates), f"Got {len(rankings)}  elements in rankings " \
                                                  f"while {len(candidates)} candidates were given."
 
-        scores = [element["score"] for element in rankings]
-        normalized_scores = [element["normalized_score"] for element in rankings]
-        n_tokens = [len(element["token_scores"]) for element in rankings]
+        scores = [element["score"]["logprob"] for element in rankings]
+        normalized_scores = [element["score"]["normalized_logprob"] for element in rankings]
+        n_tokens = [len(element["score"]["token_logprobs"]) for element in rankings]
         message = f"Normalized score isn't close to score divided by number of tokens."
         assert all([math.isclose(ns, s/n)]
                    for s, ns, n in zip(scores, normalized_scores, n_tokens)), message
@@ -117,13 +121,13 @@ class TestUnderstandEndpoints(unittest.TestCase):
         conjunction = "est equivalent à"
         outputs, cost, rid = selecter(reference, candidates, conjunction=conjunction)
         rankings = outputs[0]["rankings"]
-        normalized_scores = [element["normalized_score"] for element in rankings]
+        normalized_scores = [element["score"]["normalized_logprob"] for element in rankings]
         best_score_with_conj = max(normalized_scores)
         assert best_score_with_conj > best_score_no_conj, f"Conjunction `{conjunction}` does not" \
                                                           f"improve the score."
 
     def test_compare(self):
-        output_keys = {"reference", "similarities", "execution_metadata"}
+        output_keys = {"reference", "similarities", "best", "execution_metadata"}
         comparer = lightonmuse.Compare("orion-fr")
         reference = "Je suis content"
         correct, wrong, out_of_context = "Je suis heureux", "Je suis triste", "Hello world adhsh"
@@ -131,7 +135,8 @@ class TestUnderstandEndpoints(unittest.TestCase):
         outputs, cost, rid = comparer(reference, candidates)
         assert isinstance(outputs, list), "`outputs` is not list as expected"
         assert len(outputs) == 1, f"`len(outputs) = {len(outputs)}` despite single reference."
-        assert cost == len(candidates)+1, f"`cost={cost}` different from {candidates} candidates+1."
+        assert cost['orion-fr@default']['batch_size'] == len(candidates)+1, \
+            f"`batch_size={cost['orion-fr@default']['batch_size']}` different from {candidates} candidates+1."
         assert isinstance(rid, str), f"Detected type {type(rid)} for `rid`, expected `str` instead."
         assert output_keys == \
                outputs[0].keys(), f"Set of keys is different than expected. Expected " \

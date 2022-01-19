@@ -7,25 +7,26 @@ import lightonmuse
 class TestCreateEndpoint(unittest.TestCase):
     def test_single_prompt(self):
         # check types and single input
-        output_keys = {'execution_metadata', 'input_text', 'completions'}
+        output_keys = {'input_text', 'completions'}
         creator = lightonmuse.Create("orion-fr")
         sentence = "C'est quand même un truc magique, se dit le livreur, que d'avoir toujours"
         n_tokens = 16
         outputs, cost, rid = creator(sentence, n_tokens=n_tokens, seed=0, return_logprobs=True)
         assert isinstance(outputs, list), "`outputs` is not list as expected"
         assert len(outputs) == 1, f"`len(outputs) = {len(outputs)}` despite single input."
-        assert cost == n_tokens, f"`cost={cost}` despite {n_tokens} tokens requested."
+        assert cost['orion-fr@default']['total_tokens_generated'] == n_tokens, \
+            f"`cost={cost['orion-fr@default']['total_tokens_generated']}` despite {n_tokens} tokens requested."
         assert isinstance(rid, str), f"Detected type {type(rid)} for `rid`, expected `str` instead."
         assert output_keys == \
                outputs[0].keys(), f"Set of keys is different than expected. Expected {output_keys}" \
                                   f"got {outputs[0].keys()} instead."
         assert outputs[0]["input_text"] == sentence, f"`text` field in `outputs` does not match the" \
-                                               f" input sentence."
+                                                     f" input sentence."
 
         # check scores logic
         completion = outputs[0]["completions"][0]
-        score, normalized_score = completion["score"], completion["normalized_score"]
-        token_scores = [list(element.values())[0] for element in completion["token_scores"]]
+        score, normalized_score = completion["score"]["logprob"], completion["score"]["normalized_logprob"]
+        token_scores = [list(element.values())[0] for element in completion["score"]["token_logprobs"]]
         n_tokens = len(token_scores)
         assert len(token_scores) == n_tokens, f"Generated ({len(token_scores)}) but" \
                                               f"requested {n_tokens} tokens."
@@ -46,8 +47,9 @@ class TestCreateEndpoint(unittest.TestCase):
         assert isinstance(outputs, list), "`outputs` is not list as expected"
         assert len(outputs) == len(sentence_list), f"`len(outputs) = {len(outputs)}` despite " \
                                                    f"{len(sentence_list)} prompts."
-        assert cost == n_tokens*len(sentence_list), f"`cost={cost}` despite {n_tokens} tokens for " \
-                                                    f"{len(sentence_list)} prompts requested."
+        assert cost['orion-fr@default']['total_tokens_generated'] == n_tokens*len(sentence_list), \
+            f"`cost={cost['orion-fr@default']['total_tokens_generated']}` despite {n_tokens} tokens for " \
+            f"{len(sentence_list)} prompts requested."
         assert isinstance(rid, str), f"Detected type {type(rid)} for `rid`, expected `str` instead."
         assert outputs[1]["input_text"] == sentence_list[1], f"`text` field in `outputs` does not " \
                                                              f"match the input sentence."
@@ -58,11 +60,11 @@ class TestCreateEndpoint(unittest.TestCase):
         n_tokens, n_completions, n_best = 16, 4, 2
         outputs, cost, rid = creator(sentence, n_tokens=n_tokens, seed=0,
                                      n_completions=n_completions, n_best=n_best)
-        assert len(outputs[0]["completions"]) == n_best, f"Returned " \
-                                                          f"{len(outputs[0]['completions'])}" \
-                                                          f"completions instead of {n_best}."
-        assert cost == n_tokens * n_completions, f"Cost={cost} despite asking for {n_tokens} " \
-                                                 f"tokens for {n_completions} completions."
+        assert len(outputs[0]["completions"]) == n_best, f"Returned {len(outputs[0]['completions'])}" \
+                                                         f"completions instead of {n_best}."
+        assert cost['orion-fr@default']["total_tokens_generated"] == n_tokens * n_completions, \
+            f"Cost={cost['orion-fr@default']['total_tokens_generated']} despite asking for {n_tokens} " \
+            f"tokens for {n_completions} completions."
 
     def test_control(self):
         # word bias
@@ -92,7 +94,8 @@ class TestCreateEndpoint(unittest.TestCase):
                                      concat_prompt=True)
         assert outputs[0]["completions"][0]["output_text"][-2:] == "et", f"Completion does not " \
                                                                          f"end with stopword"
-        assert cost < n_tokens, f"Cost is higher than expected given generation ended at stopword."
+        assert cost["orion-fr@default"]["total_tokens_generated"] < n_tokens, f"Cost is higher than expected given " \
+                                                                              f"that generation ended at stopword."
 
     def test_utilities(self):
         # check reproducibility with the seed
@@ -107,7 +110,7 @@ class TestCreateEndpoint(unittest.TestCase):
 
         # check tokens scores
         outputs, _, _ = creator(sentence, n_tokens=n_tokens, seed=0, return_logprobs=False)
-        token_scores = outputs[0]["completions"][0]["token_scores"]
+        token_scores = outputs[0]["completions"][0]['score']["token_logprobs"]
         assert token_scores is None, f"Token scores is not None, despite not asking for logprobs."
 
         # check concat_prompt

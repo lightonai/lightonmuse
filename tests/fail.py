@@ -7,7 +7,7 @@ import lightonmuse
 
 single_input_endpoints = [lightonmuse.Analyse,
                           lightonmuse.Create,
-                          lightonmuse.Represent]
+                          lightonmuse.Embed]
 double_input_endpoints = [lightonmuse.Compare,
                           lightonmuse.Select]
 
@@ -58,6 +58,7 @@ class TestCreateEndpoint(unittest.TestCase):
                                                               f"{endpoint.__class__.__name__} " \
                                                               f"did not raise message about input" \
                                                               f"too long."
+
 
 if __name__ == '__main__':
     unittest.main()
