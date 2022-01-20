@@ -42,5 +42,7 @@ jobs:
         # install the wheel
         pip install dist/*.whl
     - name: Test with pytest
+      env:
+          MUSE_API_KEY: ${{ secrets.MUSE_API_KEY }}
       run: |
         pytest tests/*
