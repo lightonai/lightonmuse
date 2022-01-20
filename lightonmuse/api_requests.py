@@ -1,6 +1,7 @@
 import json
 import os
 from typing import Dict, List, Optional, Tuple, Union
+import warnings
 
 import requests
 
@@ -11,6 +12,10 @@ class BaseRequest:
         _base_url = os.environ.get("MUSE_BASE_URL")
         if _base_url is not None:
             self._base_url = _base_url
+            # because sometimes a lazy copy-paste gets to be annoying
+            if _base_url[-1] != "/":
+                _base_url = _base_url + "/"
+            warnings.warn(f"Bindings targeting {self._base_url}")
         else:
             # if no env variable is set, target the API
             self._base_url = "https://api.lighton.ai/muse/v1/"
