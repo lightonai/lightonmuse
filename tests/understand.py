@@ -8,12 +8,12 @@ class TestUnderstandEndpoints(unittest.TestCase):
     def test_analyse(self):
         # check types and single input
         output_keys = {'execution_metadata', 'text', 'score'}
-        analyser = lightonmuse.Analyse("orion-fr")
+        analyser = lightonmuse.Analyse("orion-fr-v2")
         sentence = "Je voudrais un café et deux croissants, s'il vous plait."
         outputs, cost, rid = analyser(sentence)
         assert isinstance(outputs, list), "`outputs` is not list as expected"
         assert len(outputs) == 1, f"`len(outputs) = {len(outputs)}` despite single input."
-        assert cost["orion-fr@default"]["batch_size"] == 1, f"`batch_size={cost['orion-fr@default']['batch_size']}` " \
+        assert cost["orion-fr-v2@default"]["batch_size"] == 1, f"`batch_size={cost['orion-fr-v2@default']['batch_size']}` " \
                                                             f"despite single Analyse call."
         assert isinstance(rid, str), f"Detected type {type(rid)} for `rid`, expected `str` instead."
         assert output_keys == \
@@ -35,8 +35,8 @@ class TestUnderstandEndpoints(unittest.TestCase):
         assert isinstance(outputs, list), "`outputs` is not list as expected"
         assert len(outputs) == len(sentence_list), f"`len(outputs) = {len(outputs)}` despite " \
                                                    f"len(input)={len(sentence_list)}"
-        assert cost["orion-fr@default"]["batch_size"] == len(sentence_list), \
-            f"`cost={cost['orion-fr@default']['batch_size']}` despite len(input)={len(sentence_list)}"
+        assert cost["orion-fr-v2@default"]["batch_size"] == len(sentence_list), \
+            f"`cost={cost['orion-fr-v2@default']['batch_size']}` despite len(input)={len(sentence_list)}"
         assert isinstance(rid, str), f"Detected type {type(rid)} for `rid`, expected `str` instead."
 
         # check correct functioning
@@ -49,13 +49,13 @@ class TestUnderstandEndpoints(unittest.TestCase):
     def test_embed(self):
         # check types and single input
         output_keys = {'execution_metadata', 'text', 'embedding'}
-        representer = lightonmuse.Embed("orion-fr")
+        representer = lightonmuse.Embed("orion-fr-v2")
         sentence = "Je voudrais un café et deux croissants, s'il vous plait."
         outputs, cost, rid = representer(sentence)
         assert isinstance(outputs, list), "`outputs` is not list as expected"
         assert len(outputs) == 1, f"`len(outputs) = {len(outputs)}` despite single input."
-        assert cost['orion-fr@default']['batch_size'] == 1, \
-            f"`cost={cost['orion-fr@default']['batch_size']}` despite single Represent call."
+        assert cost['orion-fr-v2@default']['batch_size'] == 1, \
+            f"`cost={cost['orion-fr-v2@default']['batch_size']}` despite single Represent call."
         assert isinstance(rid, str), f"Detected type {type(rid)} for `rid`, expected `str` instead."
         assert output_keys == \
                outputs[0].keys(), f"Set of keys is different than expected. Expected {output_keys}" \
@@ -64,7 +64,7 @@ class TestUnderstandEndpoints(unittest.TestCase):
                                                f" input sentence."
         embedding = outputs[0]["embedding"]
         assert isinstance(embedding, list)
-        assert len(embedding) == 1600, f"Shape of the embedding is {len(embedding)}!=1600 " \
+        assert len(embedding) == 2048, f"Shape of the embedding is {len(embedding)}!=2048 " \
                                        f"expected for `orion-fr`."
 
         # test multiple inputs
@@ -73,8 +73,8 @@ class TestUnderstandEndpoints(unittest.TestCase):
         assert isinstance(outputs, list), "`outputs` is not list as expected"
         assert len(outputs) == len(sentence_list), f"`len(outputs) = {len(outputs)}` despite " \
                                                    f"len(input)={len(sentence_list)}"
-        assert cost["orion-fr@default"]["batch_size"] == len(sentence_list), \
-            f"`batch size={cost['orion-fr@default']['batch_size']}` despite len(input)={len(sentence_list)}"
+        assert cost["orion-fr-v2@default"]["batch_size"] == len(sentence_list), \
+            f"`batch size={cost['orion-fr-v2@default']['batch_size']}` despite len(input)={len(sentence_list)}"
         assert isinstance(rid, str), f"Detected type {type(rid)} for `rid`, expected `str` instead."
 
         first_embedding, second_embedding = outputs[0]["embedding"], outputs[1]["embedding"]
@@ -85,15 +85,15 @@ class TestUnderstandEndpoints(unittest.TestCase):
     def test_select(self):
         # TODO: fix output_keys when concat_best is implemented in Select upstream
         output_keys = {"reference", "rankings", "best", "execution_metadata"}
-        selecter = lightonmuse.Select("orion-fr")
+        selecter = lightonmuse.Select("orion-fr-v2")
         reference = "Aujourd'hui il fait beau"
         correct, wrong = "Il y a du soleil", "Il fait moche"
         candidates = [correct, wrong]
         outputs, cost, rid = selecter(reference, candidates)
         assert isinstance(outputs, list), "`outputs` is not list as expected"
         assert len(outputs) == 1, f"`len(outputs) = {len(outputs)}` despite single reference."
-        assert cost["orion-fr@default"]["batch_size"] == len(candidates), \
-            f"`batch size={cost['orion-fr@default']['batch_size']}` despite {len(candidates)} candidates."
+        assert cost["orion-fr-v2@default"]["batch_size"] == len(candidates), \
+            f"`batch size={cost['orion-fr-v2@default']['batch_size']}` despite {len(candidates)} candidates."
         assert isinstance(rid, str), f"Detected type {type(rid)} for `rid`, expected `str` instead."
         assert output_keys == \
                outputs[0].keys(), f"Set of keys is different than expected. Expected " \
@@ -128,15 +128,15 @@ class TestUnderstandEndpoints(unittest.TestCase):
 
     def test_compare(self):
         output_keys = {"reference", "similarities", "best", "execution_metadata"}
-        comparer = lightonmuse.Compare("orion-fr")
+        comparer = lightonmuse.Compare("orion-fr-v2")
         reference = "Je suis content"
         correct, wrong, out_of_context = "Je suis heureux", "Je suis triste", "Hello world adhsh"
         candidates = [wrong, correct, out_of_context]
         outputs, cost, rid = comparer(reference, candidates)
         assert isinstance(outputs, list), "`outputs` is not list as expected"
         assert len(outputs) == 1, f"`len(outputs) = {len(outputs)}` despite single reference."
-        assert cost['orion-fr@default']['batch_size'] == len(candidates)+1, \
-            f"`batch_size={cost['orion-fr@default']['batch_size']}` different from {candidates} candidates+1."
+        assert cost['orion-fr-v2@default']['batch_size'] == len(candidates)+1, \
+            f"`batch_size={cost['orion-fr-v2@default']['batch_size']}` different from {candidates} candidates+1."
         assert isinstance(rid, str), f"Detected type {type(rid)} for `rid`, expected `str` instead."
         assert output_keys == \
                outputs[0].keys(), f"Set of keys is different than expected. Expected " \
@@ -150,7 +150,7 @@ class TestUnderstandEndpoints(unittest.TestCase):
         assert best == correct, f"The best candidate found is not correct."
         cos_sims = [element["similarity"] for element in similarities]
         assert all([-1. <= cossim <= 1. for cossim in cos_sims]), "Detected cosine similarity " \
-                                                                "value outside of [-1, 1]."
+                                                                  "value outside of [-1, 1]."
 
 
 if __name__ == '__main__':
