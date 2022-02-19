@@ -80,6 +80,15 @@ comparer = Compare("lyra-en")
 print(comparer("This is the reference.", candidates=["This is close to the reference", "While this is most definitely not"]))
 ```
 
+#### Tokenize
+
+```python
+from lightonmuse import Tokenize
+
+tokenizer = Tokenize("lyra-en")
+print(tokenizer("Let's discover how many tokens is this text"))
+```
+
 ## Private Beta access to LightOn MUSE
 
 To request access to LightOn MUSE in private beta and try our intelligence primitives, get in touch: customer.relations@lighton.ai
