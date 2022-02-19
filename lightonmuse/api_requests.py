@@ -62,9 +62,9 @@ class Create(BaseRequest):
     ----------
     model: str,
         name of the model to use as intelligence engine.
-        Currently supports `"orion-fr"` and `"lyra-en"`.
+        Currently supports `"orion-fr-v2"` and `"lyra-en"`.
     """
-    def __init__(self, model: str = "orion-fr"):
+    def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="create")
 
     def __call__(self, text: Union[str, List[str]],
@@ -186,9 +186,9 @@ class Analyse(BaseRequest):
     ----------
     model: str,
         name of the model to use as intelligence engine.
-        Currently supports only `"orion-fr"` and `"lyra-en"`.
+        Currently supports only `"orion-fr-v2"` and `"lyra-en"`.
     """
-    def __init__(self, model: str = "orion-fr"):
+    def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="analyse")
 
     def __call__(self, text: Union[str, List[str]], skill: Optional[str] = None) -> Tuple[List, int, str]:
@@ -224,9 +224,9 @@ class Embed(BaseRequest):
     ----------
     model: str,
         name of the model to use as intelligence engine.
-        Currently supports only `"orion-fr"` and `"lyra-en"`.
+        Currently supports only `"orion-fr-v2"` and `"lyra-en"`.
     """
-    def __init__(self, model: str = "orion-fr"):
+    def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="embed")
 
     def __call__(self, text: Union[str, List[str]], skill: Optional[str] = None) -> Tuple[List, int, str]:
@@ -262,9 +262,9 @@ class Select(BaseRequest):
     ----------
     model: str,
         name of the model to use as intelligence engine.
-        Currently supports only `"orion-fr"` and `"lyra-en"`.
+        Currently supports only `"orion-fr-v2"` and `"lyra-en"`.
     """
-    def __init__(self, model: str = "orion-fr"):
+    def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="select")
 
     def __call__(self, reference: str, candidates: List[str],
@@ -312,9 +312,9 @@ class Compare(BaseRequest):
     ----------
     model: str,
         name of the model to use as intelligence engine.
-        Currently supports only `"orion-fr"` and `"lyra-en"`.
+        Currently supports only `"orion-fr-v2"` and `"lyra-en"`.
     """
-    def __init__(self, model: str = "orion-fr"):
+    def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="compare")
 
     def __call__(self, reference: str, candidates: List[str], skill: Optional[str] = None) -> Tuple[List, int, str]:
@@ -338,6 +338,42 @@ class Compare(BaseRequest):
             ID string for the request.
         """
         payload = json.dumps({"reference": reference, "candidates": candidates})
+        response = self.request(payload)
+        request_id = response["request_id"]
+        cost = response["costs"]
+        outputs = response["outputs"][0]
+        return outputs, cost, request_id
+
+
+class Tokenize(BaseRequest):
+    """Tokenize endpoint.
+
+    Parameters
+    ----------
+    model: str,
+        name of the model to use as intelligence engine.
+        Currently supports only `"orion-fr-v2"` and `"lyra-en"`.
+    """
+    def __init__(self, model: str = "orion-fr-v2"):
+        super().__init__(model=model, endpoint="tokenize")
+
+    def __call__(self, text: Union[str, List[str]]) -> Tuple[List, int, str]:
+        """Parameters
+        -------------
+        text: Union[str, List[str]],
+            input text or list of input texts.
+
+        Return
+        ------
+        outputs: list,
+            list of dicts containing the reference text, the rankings of the candidates together
+            with their scores and other metadata.
+        cost: int,
+            cost for the analysis completed.
+        request_id: str,
+            ID string for the request.
+        """
+        payload = json.dumps({"text": text})
         response = self.request(payload)
         request_id = response["request_id"]
         cost = response["costs"]
