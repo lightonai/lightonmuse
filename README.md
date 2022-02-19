@@ -34,6 +34,52 @@ export MUSE_API_KEY="<your api key>"
 
 Guides and documentation can be found at the [API docs website](https://muse.lighton.ai/docs/).
 
+## Quickstart
+
+Using `lightonmuse` is pretty simple, the interface matches the endpoints offered by the Muse API
+
+#### Create
+```python
+from lightonmuse import Create
+
+
+creator = Create("lyra-en")
+print(creator("Wow, the Muse API is really amazing"))
+```
+
+#### Select
+```python
+from lightonmuse import Select
+
+
+selector = Select("orion-fr-v2")
+print(selector("Quel nom est correct?", candidates=["pain au chocolat", "chocolatine"]))
+```
+
+#### Analyse
+```python
+from lightonmuse import Analyse
+
+analyser = Analyse("orion-fr-v2")
+print(analyser("Avec \"Analyse\" on peut toujours trouver les parties plus surprenantes d'une phrase."))
+```
+
+#### Embed
+```python
+from lightonmuse import Embed
+
+embedder = Embed("lyra-en")
+print(embedder("This sentence will be transformed in a nice matrix of numbers."))
+```
+
+#### Compare
+```python
+from lightonmuse import Compare
+
+comparer = Compare("lyra-en")
+print(comparer("This is the reference.", candidates=["This is close to the reference", "While this is most definitely not"]))
+```
+
 ## Private Beta access to LightOn MUSE
 
 To request access to LightOn MUSE in private beta and try our intelligence primitives, get in touch: customer.relations@lighton.ai
