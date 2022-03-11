@@ -15,7 +15,7 @@ double_input_endpoints = [lightonmuse.Compare,
 class TestCreateEndpoint(unittest.TestCase):
     def test_empty_string(self):
         for endpoint in single_input_endpoints:
-            endpoint_obj = endpoint("orion-fr-v2")
+            endpoint_obj = endpoint("orion-fr")
             with self.assertRaises(RuntimeError) as cm:
                 if endpoint == lightonmuse.Create:
                     _, _, _ = endpoint_obj("", seed=0)
@@ -26,7 +26,7 @@ class TestCreateEndpoint(unittest.TestCase):
                                                            f"{endpoint.__class__.__name__} " \
                                                            f"did not raise message about empty text."
         for endpoint in double_input_endpoints:
-            endpoint_obj = endpoint("orion-fr-v2")
+            endpoint_obj = endpoint("orion-fr")
             with self.assertRaises(RuntimeError) as cm:
                 _, _, _ = endpoint_obj("", ["", ""])
             exception = cm.exception
@@ -38,7 +38,7 @@ class TestCreateEndpoint(unittest.TestCase):
         n = 5000
         input_too_long = ''.join(random.choice(string.ascii_uppercase) for _ in range(n))
         for endpoint in single_input_endpoints:
-            endpoint_obj = endpoint("orion-fr-v2")
+            endpoint_obj = endpoint("orion-fr")
             with self.assertRaises(RuntimeError) as cm:
                 if endpoint == lightonmuse.Create:
                     _, _, _ = endpoint_obj(input_too_long, seed=0)
@@ -50,7 +50,7 @@ class TestCreateEndpoint(unittest.TestCase):
                                                               f"did not raise message about input" \
                                                               f"too long."
         for endpoint in double_input_endpoints:
-            endpoint_obj = endpoint("orion-fr-v2")
+            endpoint_obj = endpoint("orion-fr")
             with self.assertRaises(RuntimeError) as cm:
                 _, _, _ = endpoint_obj(input_too_long, [input_too_long, input_too_long])
             exception = cm.exception

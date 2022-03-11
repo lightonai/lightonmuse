@@ -268,6 +268,7 @@ class Select(BaseRequest):
         super().__init__(model=model, endpoint="select")
 
     def __call__(self, reference: str, candidates: List[str],
+                 evaluate_reference: bool = False,
                  conjunction: str = None, skill: Optional[str] = None,
                  concat_best: bool = False) -> Tuple[List, int, str]:
         """Parameters
@@ -276,6 +277,10 @@ class Select(BaseRequest):
             reference input to compute likelihood against.
         candidates: List[str],
             input(s) that are compared to the reference and ranked based on likelihood.
+        evaluate_reference: bool, default to False,
+            if True, evaluates the loglikelihood of candidate given reference,
+            instead of reference given candidates. Especially useful when candidates
+            have very different lengths.
         conjunction: str, default to None,
             expression used to link `reference` and `candidates` to create the prompt used to
             compute the likelihood. The prompt will have the structure
@@ -297,6 +302,7 @@ class Select(BaseRequest):
             ID string for the request.
         """
         payload = json.dumps({"reference": reference, "candidates": candidates,
+                              "evaluate_reference": evaluate_reference,
                               "conjunction": conjunction, "skill": skill, "concat_best": concat_best})
         response = self.request(payload)
         request_id = response["request_id"]
