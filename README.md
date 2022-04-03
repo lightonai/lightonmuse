@@ -1,8 +1,8 @@
-# <img src="https://muse.lighton.ai/images/logo/lighton_logo.png" width=80/> lightonmuse
+# <img src="https://muse.lighton.ai/img/logo.ed57408e.png" width=50/> lightonmuse
 
 [![Twitter Follow](https://img.shields.io/twitter/follow/LightOnIO.svg?style=social)](https://twitter.com/LightOnIO)
 
-Python bindings to production-ready intelligence primitives powered by state-of-the-art language models. 
+Python bindings for the Muse API: production-ready intelligence primitives powered by state-of-the-art language models. By LightOn.
 
 > Create. Process. Understand. Learn.
 
