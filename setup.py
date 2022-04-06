@@ -32,11 +32,13 @@ try:
         long_description=long_description,
         author=author,
         author_email=author_email,
+        url='https://github.com/lightonai/lightonmuse',
         use_scm_version=True,
         setup_requires=["setuptools_scm"],
+        install_requires=["requests>=2.26.0"],
         packages=find_packages(exclude=["examples", "tests"]),
+        keywords=["NLP", "API", "AI"],
         classifiers=classifiers
-
     )
 except LookupError:
     setup(
