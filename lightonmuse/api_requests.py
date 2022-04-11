@@ -84,7 +84,7 @@ class Create(BaseRequest):
                  stop_words: Optional[List[str]] = None,
                  # utilities
                  concat_prompt: bool = False,
-                 return_logprobs: int = 0,
+                 return_logprobs: bool = False,
                  seed: Optional[int] = None
                  ) -> Tuple[List, int, str]:
         """
