@@ -8,11 +8,9 @@ Python bindings for the Muse API: production-ready intelligence primitives power
 
 Uplift your product with the natural language generation & understanding capabilities of Muse. State-of-the-art large language models in French, English, Italian, and Spanish—with more to come—are just an API call away. Our models can help you build conversational AI, copywriting tools, text classifiers, semantic search, and more.
 
-> 🔒 Accessing the Muse API private beta
+> 🛣️  Accessing the Muse API public beta
 >
-> The Muse API is currently in private beta for select customers. You can [register your interest](https://lightonmuse.typeform.com/waitlist), and we will keep you updated regarding our public launch. Stay tuned: public access is coming early 2022.
-
-Learn more about [Muse](https://muse.lighton.ai/).
+> The Muse API is currently in public beta. Learn more about Muse and sign up at [muse.lighton.ai](https://muse.lighton.ai/).
 
 ## Installation and documentation
 
