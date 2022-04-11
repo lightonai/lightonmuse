@@ -30,7 +30,7 @@ Once the package is installed, make sure to define an environment variable
 export MUSE_API_KEY="<your api key>"
 ```
 
-Guides and documentation can be found at the [API docs website](https://muse.lighton.ai/docs/).
+Guides and documentation can be found at the [API docs website](https://muse-docs.lighton.ai).
 
 ## Quickstart
 
@@ -87,6 +87,6 @@ tokenizer = Tokenize("lyra-en")
 print(tokenizer("Let's discover how many tokens is this text"))
 ```
 
-## Private Beta access to LightOn MUSE
+## Access to LightOn MUSE
 
-To request access to LightOn MUSE in private beta and try our intelligence primitives, get in touch: customer.relations@lighton.ai
+Access the public beta of LightOn MUSE and try our intelligence primitives at [muse.lighton.ai](https://muse.lighton.ai/)
