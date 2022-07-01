@@ -112,6 +112,7 @@ class Create(BaseRequest):
             - `"nucleus"`: the model will only consider the most likely tokens with total
             probability mass p. We recommend this setting for most applications.
             - `"topk"`: the model will only consider the k most likely tokens.
+            - `"typical"`: the model will discard high probability tokens with low expected information content.
         temperature: float, default 1.,
             controls how risky will the model be in its choice of tokens. A temperature of 0
             corresponds to greedy sampling; we recommend a value around 1 for most creative
@@ -160,8 +161,8 @@ class Create(BaseRequest):
         request_id: str,
             ID string for the request.
         """
-        if mode not in ["greedy", "topk", "nucleus"]:
-            raise ValueError(f"mode: {mode} is not valid. Use one of `greedy`, `topk` or `nucleus`")
+        if mode not in ["greedy", "topk", "nucleus", "typical"]:
+            raise ValueError(f"mode: {mode} is not valid. Use one of `greedy`, `topk`, `nucleus` or `typical`")
         params = {"n_tokens": n_tokens, "skill": skill, "n_completions": n_completions, "n_best": n_best,
                   # sampling
                   "mode": mode, "temperature": temperature, "p": p, "k": k,
