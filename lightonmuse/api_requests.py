@@ -160,8 +160,8 @@ class Create(BaseRequest):
         request_id: str,
             ID string for the request.
         """
-        if mode not in ["greedy", "topk", "nucleus"]:
-            raise ValueError(f"mode: {mode} is not valid. Use one of `greedy`, `topk` or `nucleus`")
+        if mode not in ["greedy", "topk", "nucleus", "typical"]:
+            raise ValueError(f"mode: {mode} is not valid. Use one of `greedy`, `topk`, `nucleus` or `typical`")
         params = {"n_tokens": n_tokens, "skill": skill, "n_completions": n_completions, "n_best": n_best,
                   # sampling
                   "mode": mode, "temperature": temperature, "p": p, "k": k,
