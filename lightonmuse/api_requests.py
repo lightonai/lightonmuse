@@ -278,6 +278,10 @@ class Select(BaseRequest):
             condition the model to perform a certain task. May be `"summarization"`.
         concat_best: bool, default to False,
             whether the response will contain a "best" field with the selected choice.
+        calibrate: bool, default to False,
+            uses calibration to de-bias to the model. Note that the method .calibrate needs to be
+            called before selecting. outputs will contain a "calibrated" key that contains the
+            rankings of the candidates after calibration.
 
         Return
         ------
