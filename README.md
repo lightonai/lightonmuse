@@ -54,6 +54,21 @@ selector = Select("orion-fr-v2")
 print(selector("Quel nom est correct?", candidates=["pain au chocolat", "chocolatine"]))
 ```
 
+#### CalibratedSelect
+```python
+from lightonmuse import CalibratedSelect
+
+
+selector = CalibratedSelect("orion-fr-v2")
+selector.fit(
+    content_free_inputs='Voici une critique : "" \n',
+    candidates=["positive", "négative"],
+    conjunction="Cette critique est"
+)
+critique = 'Voici une critique : "Ce film est super pour s\'endormir"'
+print(selector(critique, candidates=["positive", "négative"], conjunction="Cette critique est"))
+```
+
 #### Analyse
 ```python
 from lightonmuse import Analyse
