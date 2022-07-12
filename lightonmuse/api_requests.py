@@ -43,9 +43,6 @@ class BaseRequest:
                                        "completions requested.")
                 else:
                     raise RuntimeError("Invalid API key. Illegal access resulted in no generation.")
-            if isinstance(response, str):
-                # handle upstream double encoding bug
-                response = json.loads(response)
             if "error_msg" in response.keys():
                 raise RuntimeError(f"The API call returned an error for the "
                                    f"request {response['request_id']}. "
