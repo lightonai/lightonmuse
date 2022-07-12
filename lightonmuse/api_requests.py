@@ -36,20 +36,10 @@ class BaseRequest:
     def request(self, payload) -> dict:
         response = requests.post(self.url, data=payload, headers=self.headers)
         if response.ok:
-            response = response.json()
-            if isinstance(response, dict) and "error" in response.keys():
-                if response["error"] == "Timeout":
-                    raise RuntimeError("The request timed out. Reduce the number of tokens or "
-                                       "completions requested.")
-                else:
-                    raise RuntimeError("Invalid API key. Illegal access resulted in no generation.")
-            if "error_msg" in response.keys():
-                raise RuntimeError(f"The API call returned an error for the "
-                                   f"request {response['request_id']}. "
-                                   f"Error message: `{response['error_msg']}`")
+            return response.json()
         else:
-            raise RuntimeError(f"The request failed with status code {response.status_code}")
-        return response
+            raise RuntimeError(f"The request failed with status code {response.status_code}: "
+                               f"{response.content.decode('utf-8')}")
 
 
 class Create(BaseRequest):
