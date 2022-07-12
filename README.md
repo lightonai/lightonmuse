@@ -14,8 +14,13 @@ Uplift your product with the natural language generation & understanding capabil
 
 ## Installation and documentation
 
+You can install this package from PyPi with:
 
-To install:
+```bash
+pip install lightonmuse
+```
+
+To install from source:
 
 ```bash
 git clone https://github.com/lightonai/lightonmuse.git
