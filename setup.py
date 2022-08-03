@@ -36,7 +36,7 @@ try:
         url='https://github.com/lightonai/lightonmuse',
         use_scm_version=True,
         setup_requires=["setuptools_scm"],
-        install_requires=["requests>=2.26.0"],
+        install_requires=["requests>=2.26.0", "numpy>=1.21.6"],
         packages=find_packages(exclude=["examples", "tests"]),
         keywords=["NLP", "API", "AI"],
         classifiers=classifiers
