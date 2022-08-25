@@ -23,23 +23,31 @@ class BaseRequest:
         self.accept = "application/json"
         self.api_key = os.environ.get("MUSE_API_KEY")
         if self.api_key is None:
-            raise RuntimeError("No API key was detected. Set your API key by running"
-                               "`export MUSE_API_KEY=<YOUR-API-KEY> from the terminal.`")
+            raise RuntimeError(
+                "No API key was detected. Set your API key by running"
+                "`export MUSE_API_KEY=<YOUR-API-KEY> from the terminal.`"
+            )
         self.model = model
         self.content_type = "application/json"
 
     @property
     def headers(self) -> dict:
-        return {'accept': self.accept, 'X-API-KEY': self.api_key,
-                'X-Model': self.model, 'Content-Type': self.content_type}
+        return {
+            "accept": self.accept,
+            "X-API-KEY": self.api_key,
+            "X-Model": self.model,
+            "Content-Type": self.content_type,
+        }
 
     def request(self, payload) -> dict:
         response = requests.post(self.url, data=payload, headers=self.headers)
         if response.ok:
             return response.json()
         else:
-            raise RuntimeError(f"The request failed with status code {response.status_code}: "
-                               f"{response.content.decode('utf-8')}")
+            raise RuntimeError(
+                f"The request failed with status code {response.status_code}: "
+                f"{response.content.decode('utf-8')}"
+            )
 
 
 class Create(BaseRequest):
@@ -50,29 +58,32 @@ class Create(BaseRequest):
     model: str,
         name of the model to use as intelligence engine.
     """
+
     def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="create")
 
-    def __call__(self, text: Union[str, List[str]],
-                 skill: Optional[str] = None,
-                 n_tokens: int = 20,
-                 n_completions: int = 1,
-                 n_best: int = 1,
-                 # sampling
-                 mode: str = "nucleus",
-                 temperature: float = 1,
-                 p: float = 0.9,
-                 k: int = 5,
-                 # control
-                 word_biases: Optional[Dict[str, float]] = None,
-                 presence_penalty: float = 0.,
-                 frequency_penalty: float = 0.,
-                 stop_words: Optional[List[str]] = None,
-                 # utilities
-                 concat_prompt: bool = False,
-                 return_logprobs: bool = False,
-                 seed: Optional[int] = None
-                 ) -> Tuple[List, int, str]:
+    def __call__(
+        self,
+        text: Union[str, List[str]],
+        skill: Optional[str] = None,
+        n_tokens: int = 20,
+        n_completions: int = 1,
+        n_best: int = 1,
+        # sampling
+        mode: str = "nucleus",
+        temperature: float = 1,
+        p: float = 0.9,
+        k: int = 5,
+        # control
+        word_biases: Optional[Dict[str, float]] = None,
+        presence_penalty: float = 0.0,
+        frequency_penalty: float = 0.0,
+        stop_words: Optional[List[str]] = None,
+        # utilities
+        concat_prompt: bool = False,
+        return_logprobs: bool = False,
+        seed: Optional[int] = None,
+    ) -> Tuple[List, int, str]:
         """
         Parameters
         -------------
@@ -148,16 +159,29 @@ class Create(BaseRequest):
             ID string for the request.
         """
         if mode not in ["greedy", "topk", "nucleus", "typical"]:
-            raise ValueError(f"mode: {mode} is not valid. Use one of `greedy`, `topk`, `nucleus` or `typical`")
-        params = {"n_tokens": n_tokens, "skill": skill, "n_completions": n_completions, "n_best": n_best,
-                  # sampling
-                  "mode": mode, "temperature": temperature, "p": p, "k": k,
-                  # control
-                  "biases": word_biases, "presence_penalty": presence_penalty,
-                  "frequence_penalty": frequency_penalty, "stop_words": stop_words,
-                  # utilities
-                  "concat_prompt": concat_prompt, "return_logprobs": return_logprobs, "seed": seed
-                  }
+            raise ValueError(
+                f"mode: {mode} is not valid. Use one of `greedy`, `topk`, `nucleus` or `typical`"
+            )
+        params = {
+            "n_tokens": n_tokens,
+            "skill": skill,
+            "n_completions": n_completions,
+            "n_best": n_best,
+            # sampling
+            "mode": mode,
+            "temperature": temperature,
+            "p": p,
+            "k": k,
+            # control
+            "biases": word_biases,
+            "presence_penalty": presence_penalty,
+            "frequence_penalty": frequency_penalty,
+            "stop_words": stop_words,
+            # utilities
+            "concat_prompt": concat_prompt,
+            "return_logprobs": return_logprobs,
+            "seed": seed,
+        }
         payload = json.dumps({"text": text, "params": params})
         response = self.request(payload)
         request_id = response["request_id"]
@@ -174,10 +198,13 @@ class Analyse(BaseRequest):
     model: str,
         name of the model to use as intelligence engine.
     """
+
     def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="analyse")
 
-    def __call__(self, text: Union[str, List[str]], skill: Optional[str] = None) -> Tuple[List, int, str]:
+    def __call__(
+        self, text: Union[str, List[str]], skill: Optional[str] = None
+    ) -> Tuple[List, int, str]:
         """Parameters
         -------------
         text: Union[str, List[str]],
@@ -211,10 +238,13 @@ class Embed(BaseRequest):
     model: str,
         name of the model to use as intelligence engine.
     """
+
     def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="embed")
 
-    def __call__(self, text: Union[str, List[str]], skill: Optional[str] = None) -> Tuple[List, int, str]:
+    def __call__(
+        self, text: Union[str, List[str]], skill: Optional[str] = None
+    ) -> Tuple[List, int, str]:
         """Parameters
         -------------
         text: Union[str, List[str]],
@@ -248,19 +278,25 @@ class Select(BaseRequest):
     model: str,
         name of the model to use as intelligence engine.
     """
+
     def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="select")
 
-    def __call__(self, reference: Union[str, List[str]], candidates: Union[List[str], List[List[str]]],
-                 evaluate_reference: bool = False,
-                 conjunction: str = None, skill: Optional[str] = None,
-                 concat_best: bool = False) -> Tuple[List, int, str]:
+    def __call__(
+        self,
+        reference: Union[str, List[str]],
+        candidates: Union[List[str], List[List[str]]],
+        evaluate_reference: bool = False,
+        conjunction: str = None,
+        skill: Optional[str] = None,
+        concat_best: bool = False,
+    ) -> Tuple[List, int, str]:
         """Parameters
         -------------
         reference: Union[str, List[str]],,
             reference input or list of reference inputs to compute likelihood against.
         candidates: Union[List[str], List[List[str]]],
-            input(s) that are compared to the reference and ranked based on likelihood. 
+            input(s) that are compared to the reference and ranked based on likelihood.
             If `candidates` is a list of lists, `reference` should be a list, and they should have the same length.
             Each entry will be computed against the corresponding `reference` input.
         evaluate_reference: bool, default to False,
@@ -276,10 +312,6 @@ class Select(BaseRequest):
             condition the model to perform a certain task. May be `"summarization"`.
         concat_best: bool, default to False,
             whether the response will contain a "best" field with the selected choice.
-        calibrate: bool, default to False,
-            uses calibration to de-bias to the model. Note that the method .calibrate needs to be
-            called before selecting. outputs will contain a "calibrated" key that contains the
-            rankings of the candidates after calibration.
 
         Return
         ------
@@ -292,23 +324,52 @@ class Select(BaseRequest):
             ID string for the request.
         """
         if isinstance(reference, str):
-            assert all(isinstance(x, str) for x in candidates), "When `reference` is a string, `candidates` should be a list of strings."
-            payload_dict = {"reference": reference, "candidates": candidates,
-                                "evaluate_reference": evaluate_reference,
-                                "conjunction": conjunction, "skill": skill, "concat_best": concat_best}
+            assert all(
+                isinstance(x, str) for x in candidates
+            ), "When `reference` is a string, `candidates` should be a list of strings."
+            payload_dict = {
+                "reference": reference,
+                "candidates": candidates,
+                "evaluate_reference": evaluate_reference,
+                "conjunction": conjunction,
+                "skill": skill,
+                "concat_best": concat_best,
+            }
         elif isinstance(reference, list):
             # different candidates for each reference
             if all(isinstance(x, list) for x in candidates):
-                assert len(reference) == len(candidates), f"`reference` and `candidates` should have the same length, " \
-                                                           "got {len(reference)} and {len(candidates)} instead."
-                payload_dict = [{"reference": ref, "candidates": cand, "evaluate_reference": evaluate_reference, 
-                                 "conjunction": conjunction, "skill": skill, "concat_best": concat_best} for ref, cand in zip(reference, candidates)]
+                assert len(reference) == len(candidates), (
+                    f"`reference` and `candidates` should have the same length, "
+                    "got {len(reference)} and {len(candidates)} instead."
+                )
+                payload_dict = [
+                    {
+                        "reference": ref,
+                        "candidates": cand,
+                        "evaluate_reference": evaluate_reference,
+                        "conjunction": conjunction,
+                        "skill": skill,
+                        "concat_best": concat_best,
+                    }
+                    for ref, cand in zip(reference, candidates)
+                ]
             # same candidates for each reference
             elif all(isinstance(x, str) for x in candidates):
-                payload_dict = [{"reference": ref, "candidates": candidates, "evaluate_reference": evaluate_reference, 
-                                 "conjunction": conjunction, "skill": skill, "concat_best": concat_best} for ref in reference]
+                payload_dict = [
+                    {
+                        "reference": ref,
+                        "candidates": candidates,
+                        "evaluate_reference": evaluate_reference,
+                        "conjunction": conjunction,
+                        "skill": skill,
+                        "concat_best": concat_best,
+                    }
+                    for ref in reference
+                ]
         else:
-            raise TypeError(f"`reference` of type {type(reference)} is not supported, it should be `str` or `list`.")
+            raise TypeError(
+                f"`reference` of type {type(reference)} is not supported, it should be `str` or `list`."
+            )
         payload = json.dumps(payload_dict)
         response = self.request(payload)
         request_id = response["request_id"]
@@ -328,10 +389,13 @@ class Compare(BaseRequest):
     model: str,
         name of the model to use as intelligence engine.
     """
+
     def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="compare")
 
-    def __call__(self, reference: str, candidates: List[str], skill: Optional[str] = None) -> Tuple[List, int, str]:
+    def __call__(
+        self, reference: str, candidates: List[str], skill: Optional[str] = None
+    ) -> Tuple[List, int, str]:
         """Parameters
         -------------
         reference: str,
@@ -367,6 +431,7 @@ class Tokenize(BaseRequest):
     model: str,
         name of the model to use as intelligence engine.
     """
+
     def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="tokenize")
 
