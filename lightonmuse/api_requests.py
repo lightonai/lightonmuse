@@ -251,16 +251,18 @@ class Select(BaseRequest):
     def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="select")
 
-    def __call__(self, reference: str, candidates: List[str],
+    def __call__(self, reference: Union[str, List[str]], candidates: Union[List[str], List[List[str]]],
                  evaluate_reference: bool = False,
                  conjunction: str = None, skill: Optional[str] = None,
                  concat_best: bool = False) -> Tuple[List, int, str]:
         """Parameters
         -------------
-        reference: str,
-            reference input to compute likelihood against.
-        candidates: List[str],
-            input(s) that are compared to the reference and ranked based on likelihood.
+        reference: Union[str, List[str]],,
+            reference input or list of reference inputs to compute likelihood against.
+        candidates: Union[List[str], List[List[str]]],
+            input(s) that are compared to the reference and ranked based on likelihood. 
+            If `candidates` is a list of lists, `reference` should be a list, and they should have the same length.
+            Each entry will be computed against the corresponding `reference` input.
         evaluate_reference: bool, default to False,
             if True, evaluates the loglikelihood of candidate given reference,
             instead of reference given candidates. Especially useful when candidates
@@ -289,13 +291,32 @@ class Select(BaseRequest):
         request_id: str,
             ID string for the request.
         """
-        payload = json.dumps({"reference": reference, "candidates": candidates,
-                              "evaluate_reference": evaluate_reference,
-                              "conjunction": conjunction, "skill": skill, "concat_best": concat_best})
+        if isinstance(reference, str):
+            assert all(isinstance(x, str) for x in candidates), "When `reference` is a string, `candidates` should be a list of strings."
+            payload_dict = {"reference": reference, "candidates": candidates,
+                                "evaluate_reference": evaluate_reference,
+                                "conjunction": conjunction, "skill": skill, "concat_best": concat_best}
+        elif isinstance(reference, list):
+            # different candidates for each reference
+            if all(isinstance(x, list) for x in candidates):
+                assert len(reference) == len(candidates), f"`reference` and `candidates` should have the same length, " \
+                                                           "got {len(reference)} and {len(candidates)} instead."
+                payload_dict = [{"reference": ref, "candidates": cand, "evaluate_reference": evaluate_reference, 
+                                 "conjunction": conjunction, "skill": skill, "concat_best": concat_best} for ref, cand in zip(reference, candidates)]
+            # same candidates for each reference
+            elif all(isinstance(x, str) for x in candidates):
+                payload_dict = [{"reference": ref, "candidates": candidates, "evaluate_reference": evaluate_reference, 
+                                 "conjunction": conjunction, "skill": skill, "concat_best": concat_best} for ref in reference]
+        else:
+            raise TypeError(f"`reference` of type {type(reference)} is not supported, it should be `str` or `list`.")
+        payload = json.dumps(payload_dict)
         response = self.request(payload)
         request_id = response["request_id"]
         cost = response["costs"]
-        outputs = response["outputs"][0]
+        outputs = response["outputs"]
+        if len(outputs) == 1:
+            # for backward compatibility after adding batching support
+            outputs = outputs[0]
         return outputs, cost, request_id
 
 

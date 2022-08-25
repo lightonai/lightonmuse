@@ -8,7 +8,7 @@ class TestCalibratedSelect(unittest.TestCase):
     def test_calibrated_select(self):
         output_keys = {"reference", "rankings", "best", "execution_metadata", "calibrated"}
         selector = lightonmuse.CalibratedSelect("orion-fr")
-        reference = 'Voici une critique : "Un film fait par des parisiens pour des parisiens. Un accent faux et dégradant. Pour un tout sans saveur." \n'
+        reference = 'Voici une critique : "Un film fait par des parisiens pour des parisiens. Un accent faux et dégradant. Pour un tout sans saveur."\n'
         correct, wrong = "négative", "positive"
         candidates = [correct, wrong]
         conjunction = "Cette critique est"

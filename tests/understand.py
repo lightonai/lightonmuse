@@ -132,6 +132,15 @@ class TestUnderstandEndpoints(unittest.TestCase):
         score_switched = outputs_switched[0]['rankings'][0]['score']['normalized_logprob']
         assert score != score_switched, f"Score of reference|candidate and candidate|reference are the same"
 
+        # batching
+        outputs, cost, rid = selecter([reference, reference], candidates)
+        assert len(outputs) == 2, f"Output length is f{len(outputs)}, expected length 2."
+        outputs, cost, rid = selecter([reference, reference], [candidates, [reference]])
+        assert len(outputs) == 2, f"Output length is f{len(outputs)}, expected length 2."
+        assert len(outputs[0][0]['rankings']) == 2, f"Reference was scored against 2 candidates, got {len(outputs[0][0]['rankings'])} instead"
+        assert len(outputs[1][0]['rankings']) == 1, f"Reference was scored against 1 candidate, got {len(outputs[1][0]['rankings'])} instead"
+
+
     def test_compare(self):
         output_keys = {"reference", "similarities", "best", "execution_metadata"}
         comparer = lightonmuse.Compare("orion-fr")
