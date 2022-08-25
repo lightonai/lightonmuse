@@ -49,7 +49,6 @@ class Create(BaseRequest):
     ----------
     model: str,
         name of the model to use as intelligence engine.
-        Currently supports `"orion-fr-v2"` and `"lyra-en"`.
     """
     def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="create")
@@ -174,7 +173,6 @@ class Analyse(BaseRequest):
     ----------
     model: str,
         name of the model to use as intelligence engine.
-        Currently supports only `"orion-fr-v2"` and `"lyra-en"`.
     """
     def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="analyse")
@@ -212,7 +210,6 @@ class Embed(BaseRequest):
     ----------
     model: str,
         name of the model to use as intelligence engine.
-        Currently supports only `"orion-fr-v2"` and `"lyra-en"`.
     """
     def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="embed")
@@ -250,7 +247,6 @@ class Select(BaseRequest):
     ----------
     model: str,
         name of the model to use as intelligence engine.
-        Currently supports only `"orion-fr-v2"` and `"lyra-en"`.
     """
     def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="select")
@@ -310,7 +306,6 @@ class Compare(BaseRequest):
     ----------
     model: str,
         name of the model to use as intelligence engine.
-        Currently supports only `"orion-fr-v2"` and `"lyra-en"`.
     """
     def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="compare")
@@ -350,7 +345,6 @@ class Tokenize(BaseRequest):
     ----------
     model: str,
         name of the model to use as intelligence engine.
-        Currently supports only `"orion-fr-v2"` and `"lyra-en"`.
     """
     def __init__(self, model: str = "orion-fr-v2"):
         super().__init__(model=model, endpoint="tokenize")

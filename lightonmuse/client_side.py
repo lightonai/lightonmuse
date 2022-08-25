@@ -10,7 +10,6 @@ class CalibratedSelect(Select):
     ----------
     model: str,
         name of the model to use as intelligence engine.
-        Currently supports only `"orion-fr-v2"` and `"lyra-en"`.
     """
 
     def __init__(self, model: str = "orion-fr-v2"):
