@@ -25,7 +25,7 @@ class CalibratedSelect(Select):
         content_free_inputs: Union[str, List[str]],
         candidates: List[str],
         conjunction: Optional[str] = None,
-        calibration_mode: Optional[str] = "diagonal_W",
+        calibration_mode: Optional[str] = "identity_W",
     ):
         """Computes the calibration matrices to be used with Select.
         Parameters
@@ -56,9 +56,7 @@ class CalibratedSelect(Select):
         n_tokens_used = 0
         all_p_cf = []
         for cf_input in self.content_free_inputs:
-            out_cf, _, _ = super().__call__(
-                cf_input, self.candidates, conjunction=self.conjunction
-            )
+            out_cf, _, _ = super().__call__(cf_input, self.candidates, conjunction=self.conjunction)
             all_p_cf.append(
                 [
                     np.exp(element["score"]["normalized_logprob"])
@@ -139,8 +137,7 @@ class CalibratedSelect(Select):
         )
         # Extract and normalize the uncalibrated scores
         probs_uncal = [
-            np.exp(element["score"]["normalized_logprob"])
-            for element in out_uncal[0]["rankings"]
+            np.exp(element["score"]["normalized_logprob"]) for element in out_uncal[0]["rankings"]
         ]
         probs_uncal = probs_uncal / sum(probs_uncal)
 
@@ -158,10 +155,7 @@ class CalibratedSelect(Select):
             best = self.candidates[correct_label_idx]
         out_uncal[0]["calibrated"] = {
             "best": best,
-            "scores": {
-                self.candidates[i]: scores_cal[i][0]
-                for i in range(len(self.candidates))
-            },
+            "scores": {self.candidates[i]: scores_cal[i][0] for i in range(len(self.candidates))},
             "content_free_inputs": self.content_free_inputs,
             "calibration_mode": self.calibration_mode,
             "calibration_cost": self.calib_cost,
