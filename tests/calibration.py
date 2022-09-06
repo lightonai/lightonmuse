@@ -38,23 +38,18 @@ class TestCalibratedSelect(unittest.TestCase):
         )
         outputs, cost, rid = selector(reference, candidates, conjunction=conjunction)
         assert isinstance(outputs, list), "`outputs` is not list as expected"
-        assert (
-            len(outputs) == 1
-        ), f"`len(outputs) = {len(outputs)}` despite single reference."
+        assert len(outputs) == 1, f"`len(outputs) = {len(outputs)}` despite single reference."
         assert cost["orion-fr@default"]["batch_size"] == len(
             candidates
         ), f"`batch size={cost['orion-fr@default']['batch_size']}` despite {len(candidates)} candidates."
-        assert isinstance(
-            rid, str
-        ), f"Detected type {type(rid)} for `rid`, expected `str` instead."
+        assert isinstance(rid, str), f"Detected type {type(rid)} for `rid`, expected `str` instead."
         assert output_keys == outputs[0].keys(), (
             f"Set of keys is different than expected. Expected "
             f"{output_keys} got {outputs[0].keys()} instead."
         )
         # Calibration specific errors
         assert outputs[0]["reference"] == reference, (
-            f"`reference` field in `outputs` does not "
-            f"match the input `reference` sentence."
+            f"`reference` field in `outputs` does not " f"match the input `reference` sentence."
         )
         calibrated = outputs[0]["calibrated"]
         assert calibrated["calibration_cost"]["batch_size"] == len(
@@ -65,7 +60,7 @@ class TestCalibratedSelect(unittest.TestCase):
             f"match the input `content_free_inputs` used for calibration."
         )
 
-        assert calibrated["calibration_mode"] == "diagonal_W", (
+        assert calibrated["calibration_mode"] == "identity_W", (
             f"`calibration_mode` field in `outputs` does not "
             f"match the input default `calibration_mode`."
         )
@@ -82,17 +77,12 @@ class TestCalibratedSelect(unittest.TestCase):
         scores = [element[1] for element in rankings.items()]
 
         # check that same candidates re-order differently give the same results
-        outputs_switch, _, _ = selector(
-            reference, candidates[::-1], conjunction=conjunction
-        )
+        outputs_switch, _, _ = selector(reference, candidates[::-1], conjunction=conjunction)
         scores_switch = [
             element[1] for element in outputs_switch[0]["calibrated"]["scores"].items()
         ]
         assert all(
-            (
-                math.isclose(s1, s2)
-                for s1, s2 in zip(sorted(scores), sorted(scores_switch))
-            )
+            (math.isclose(s1, s2) for s1, s2 in zip(sorted(scores), sorted(scores_switch)))
         ), f"Calibrated scores using re-ordered candidates are not the same."
 
         # check that different content free inputs gives different calibrated scores
@@ -119,9 +109,7 @@ class TestCalibratedSelect(unittest.TestCase):
         )
         outputs_mode, _, _ = selector(reference, candidates, conjunction=conjunction)
 
-        scores_mode = [
-            element[1] for element in outputs_mode[0]["calibrated"]["scores"]
-        ]
+        scores_mode = [element[1] for element in outputs_mode[0]["calibrated"]["scores"]]
         assert (
             scores != scores_mode
         ), f"Calibrated scores using different calibration modes are the same."
