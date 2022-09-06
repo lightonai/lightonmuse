@@ -14,7 +14,7 @@ class TestCalibratedSelect(unittest.TestCase):
             "calibrated",
         }
         selector = lightonmuse.CalibratedSelect("orion-fr")
-        reference = 'Voici une critique : "Un film fait par des parisiens pour des parisiens. Un accent faux et dégradant. Pour un tout sans saveur." \n'
+        reference = 'Voici une critique : "Un film fait par des parisiens pour des parisiens. Un accent faux et dégradant. Pour un tout sans saveur."\n'
         correct, wrong = "négative", "positive"
         candidates = [correct, wrong]
         conjunction = "Cette critique est"
@@ -105,7 +105,7 @@ class TestCalibratedSelect(unittest.TestCase):
             content_free_inputs=content_free_inputs,
             candidates=candidates,
             conjunction=conjunction,
-            calibration_mode="identity_W",
+            calibration_mode="diagonal_W",
         )
         outputs_mode, _, _ = selector(reference, candidates, conjunction=conjunction)
 
