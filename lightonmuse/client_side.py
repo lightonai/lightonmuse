@@ -152,9 +152,17 @@ class CalibratedSelect(Select):
             )
         else:
             best = self.candidates[correct_label_idx]
+        out_uncal[0]["best"] = best
+        out_uncal[0]["rankings"] = [
+            {"text": self.candidates[i], "score": scores_cal[i][0]}
+            for i in range(len(self.candidates))
+        ]
         out_uncal[0]["calibrated"] = {
             "best": best,
-            "scores": {self.candidates[i]: scores_cal[i][0] for i in range(len(self.candidates))},
+            "rankings": [
+                {"text": self.candidates[i], "score": scores_cal[i][0]}
+                for i in range(len(self.candidates))
+            ],
             "content_free_inputs": self.content_free_inputs,
             "calibration_mode": self.calibration_mode,
             "calibration_cost": self.calib_cost,
