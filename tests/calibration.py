@@ -14,7 +14,7 @@ class TestCalibratedSelect(unittest.TestCase):
             "calibrated",
         }
         selector = lightonmuse.CalibratedSelect("orion-fr")
-        reference = 'Voici une critique : "Un film fait par des parisiens pour des parisiens. Un accent faux et dégradant. Pour un tout sans saveur."\n'
+        reference = 'Voici une critique : "Un film fait par des parisiens pour des parisiens. Un accent faux et dégradant. Pour un tout sans saveur." \n'
         correct, wrong = "négative", "positive"
         candidates = [correct, wrong]
         conjunction = "Cette critique est"
@@ -68,18 +68,18 @@ class TestCalibratedSelect(unittest.TestCase):
         assert (
             calibrated["best"] == correct
         ), f"{calibrated['best']} was chosen but the correct answer is {correct}"
-        rankings = calibrated["scores"]
+        rankings = calibrated["rankings"]
         assert len(rankings) == len(candidates), (
             f"Got {len(rankings)}  elements in calibrated rankings "
             f"while {len(candidates)} candidates were given."
         )
 
-        scores = [element[1] for element in rankings.items()]
+        scores = [element["score"] for element in rankings]
 
         # check that same candidates re-order differently give the same results
         outputs_switch, _, _ = selector(reference, candidates[::-1], conjunction=conjunction)
         scores_switch = [
-            element[1] for element in outputs_switch[0]["calibrated"]["scores"].items()
+            element["score"] for element in outputs_switch[0]["calibrated"]["rankings"]
         ]
         assert all(
             (math.isclose(s1, s2) for s1, s2 in zip(sorted(scores), sorted(scores_switch)))
@@ -94,7 +94,7 @@ class TestCalibratedSelect(unittest.TestCase):
         outputs_diffit, _, _ = selector(reference, candidates, conjunction=conjunction)
 
         scores_diffit = [
-            element[1] for element in outputs_diffit[0]["calibrated"]["scores"].items()
+            element["score"] for element in outputs_diffit[0]["calibrated"]["rankings"]
         ]
         assert (
             scores != scores_diffit
@@ -109,7 +109,7 @@ class TestCalibratedSelect(unittest.TestCase):
         )
         outputs_mode, _, _ = selector(reference, candidates, conjunction=conjunction)
 
-        scores_mode = [element[1] for element in outputs_mode[0]["calibrated"]["scores"]]
+        scores_mode = [element["score"] for element in outputs_mode[0]["calibrated"]["rankings"]]
         assert (
             scores != scores_mode
         ), f"Calibrated scores using different calibration modes are the same."
