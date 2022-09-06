@@ -53,18 +53,17 @@ class CalibratedSelect(Select):
 
     def get_calibration_matrices(self) -> Tuple[np.ndarray, np.ndarray]:
         # Calculate the content-free probabilities for different content-free templates
-        n_tokens_used = 0
-        all_p_cf = []
-        for cf_input in self.content_free_inputs:
-            out_cf, _, _ = super().__call__(cf_input, self.candidates, conjunction=self.conjunction)
-            all_p_cf.append(
-                [
-                    np.exp(element["score"]["normalized_logprob"])
-                    for element in out_cf[0]["rankings"]
-                ]
-            )
-            n_tokens_used += out_cf[0]["execution_metadata"]["cost"]["tokens_used"]
-        self.calib_cost = out_cf[0]["execution_metadata"]["cost"]
+        out_cf, _, _ = super().__call__(
+            self.content_free_inputs, self.candidates, conjunction=self.conjunction
+        )
+        if isinstance(out_cf[0], dict):
+            out_cf[0] = [out_cf[0]]
+        all_p_cf = [
+            [np.exp(element["score"]["normalized_logprob"]) for element in out[0]["rankings"]]
+            for out in out_cf
+        ]
+        n_tokens_used = sum([out[0]["execution_metadata"]["cost"]["tokens_used"] for out in out_cf])
+        self.calib_cost = out_cf[0][0]["execution_metadata"]["cost"]
         self.calib_cost["tokens_used"] = n_tokens_used
         self.calib_cost["tokens_input"] = n_tokens_used
 
