@@ -1,8 +1,9 @@
 name: Push Wheels to PyPI
 
 on:
-  release:
-    types: [published]
+  push:
+    branches: [master]
+    tags: ["v*.*.*"]
 
 jobs:
   build-n-publish:
